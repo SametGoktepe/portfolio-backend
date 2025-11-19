@@ -61,12 +61,13 @@ Route::prefix('v1')->group(function () {
     // Projects - Public GET
     Route::prefix('projects')->group(function () {
         Route::get('/', [ProjectController::class, 'index']); // With pagination
-        Route::get('/{id}/show', [ProjectController::class, 'show']);
+
     });
 
     // Projects - Protected WRITE
     Route::middleware('auth:sanctum')->prefix('projects')->group(function () {
         Route::post('/store', [ProjectController::class, 'store']);
+        Route::get('/{id}/show', [ProjectController::class, 'show']);
         Route::put('/{id}/update', [ProjectController::class, 'update']);
         Route::patch('/{id}/status', [ProjectController::class, 'changeStatus']);
         Route::delete('/{id}/delete', [ProjectController::class, 'destroy']);

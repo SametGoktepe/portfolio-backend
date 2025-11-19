@@ -1,59 +1,454 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Complete Portfolio API Documentation
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## 🎯 Overview
+DDD (Domain-Driven Design) mimarisine uygun, Laravel 12 + Sanctum tabanlı Portfolio API.
 
-## About Laravel
+**Base URL:** `http://localhost/api/v1` veya `https://sametgoktepe.test/api/v1`
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 📋 Table of Contents
+1. [Authentication](#authentication)
+2. [About](#about)
+3. [Skills](#skills)
+4. [Education](#education)
+5. [Projects (Paginated)](#projects)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## 🔐 Authentication
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### Register
+```http
+POST /api/v1/auth/register
+```
+**Body:**
+```json
+{
+  "name": "Samet",
+  "surname": "Goktepe",
+  "username": "sametgoktepe",
+  "email": "samet@example.com",
+  "password": "password123",
+  "password_confirmation": "password123"
+}
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Login
+```http
+POST /api/v1/auth/login
+```
+**Body:**
+```json
+{
+  "email": "samet@example.com",
+  "password": "password123"
+}
+```
 
-## Laravel Sponsors
+### Me (Protected)
+```http
+GET /api/v1/auth/me
+Authorization: Bearer {token}
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Logout (Protected)
+```http
+POST /api/v1/auth/logout
+Authorization: Bearer {token}
+```
 
-### Premium Partners
+---
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## 👤 About
 
-## Contributing
+### Get About (Public)
+```http
+GET /api/v1/about
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Create About (Protected)
+```http
+POST /api/v1/about
+Authorization: Bearer {token}
+```
+**Body:**
+```json
+{
+  "image": "/images/profile.jpg",
+  "full_name": "Samet Goktepe",
+  "title": "Full Stack Developer",
+  "summary": "Passionate developer...",
+  "email": "samet@example.com",
+  "phone": "+90 555 123 4567",
+  "city": "Istanbul",
+  "state": "Istanbul",
+  "country": "Turkey",
+  "postal_code": "34000",
+  "github": "https://github.com/sametgoktepe",
+  "linkedin": "https://linkedin.com/in/sametgoktepe",
+  "twitter": "https://twitter.com/sametgoktepe"
+}
+```
 
-## Code of Conduct
+### Update About (Protected)
+```http
+PUT /api/v1/about/{id}/update
+Authorization: Bearer {token}
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Delete About (Protected)
+```http
+DELETE /api/v1/about/{id}/delete
+Authorization: Bearer {token}
+```
 
-## Security Vulnerabilities
+---
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## 💡 Skills
 
-## License
+### List Skills (Public)
+```http
+GET /api/v1/skills
+```
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Skills retrieved successfully",
+  "data": [
+    {
+      "category": {
+        "id": "uuid",
+        "name": "Frontend",
+        "slug": "frontend"
+      },
+      "skills": [
+        {"id": "uuid", "category_id": "uuid", "name": "React"},
+        {"id": "uuid", "category_id": "uuid", "name": "TypeScript"}
+      ]
+    }
+  ]
+}
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### Create/Update Skills (Protected) - Sync Operation
+```http
+PUT /api/v1/skills/update
+Authorization: Bearer {token}
+```
+**Body:**
+```json
+{
+  "category_name": "Frontend",
+  "skills": ["React", "TypeScript", "Next.js"]
+}
+```
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Skills synchronized successfully",
+  "data": {
+    "category": {
+      "id": "uuid",
+      "name": "Frontend",
+      "slug": "frontend"
+    },
+    "skills": [...],
+    "statistics": {
+      "added": 1,
+      "deleted": 0,
+      "total": 3
+    }
+  }
+}
+```
+
+### Store Skills (Protected) - Add Only
+```http
+POST /api/v1/skills/store
+Authorization: Bearer {token}
+```
+
+### Delete Skill (Protected)
+```http
+DELETE /api/v1/skills/{id}/delete
+Authorization: Bearer {token}
+```
+
+---
+
+## 🎓 Education
+
+### List Education (Public)
+```http
+GET /api/v1/education
+```
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Education records retrieved successfully",
+  "data": [
+    {
+      "id": "uuid",
+      "school": "Istanbul University",
+      "degree": "Bachelor of Science",
+      "field_of_study": "Computer Engineering",
+      "year_period": {
+        "start_year": 2020,
+        "end_year": 2024,
+        "is_ongoing": false,
+        "duration": "4 years"
+      }
+    }
+  ]
+}
+```
+
+### Show Education (Public)
+```http
+GET /api/v1/education/{id}/show
+```
+
+### Create Education (Protected)
+```http
+POST /api/v1/education/store
+Authorization: Bearer {token}
+```
+**Body:**
+```json
+{
+  "school": "MIT",
+  "degree": "Master of Science",
+  "field_of_study": "Artificial Intelligence",
+  "start_year": 2024,
+  "end_year": null
+}
+```
+
+### Update Education (Protected)
+```http
+PUT /api/v1/education/{id}/update
+Authorization: Bearer {token}
+```
+
+### Delete Education (Protected)
+```http
+DELETE /api/v1/education/{id}/delete
+Authorization: Bearer {token}
+```
+
+---
+
+## 🚀 Projects (With Pagination)
+
+### List Projects (Public, Paginated)
+```http
+GET /api/v1/projects?per_page=10&status=completed
+```
+
+**Query Parameters:**
+- `per_page`: Items per page (default: 15)
+- `status`: Filter (in_progress, completed, backlog, cancelled)
+
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Projects retrieved successfully",
+  "data": [...],
+  "pagination": {
+    "current_page": 1,
+    "per_page": 10,
+    "total": 25,
+    "last_page": 3,
+    "from": 1,
+    "to": 10,
+    "has_more_pages": true
+  }
+}
+```
+
+### Show Project (Public)
+```http
+GET /api/v1/projects/{id}/show
+```
+
+### Create Project (Protected)
+```http
+POST /api/v1/projects/store
+Authorization: Bearer {token}
+```
+**Body:**
+```json
+{
+  "title": "E-Commerce Platform",
+  "description": "Full-featured online shopping platform",
+  "images": ["https://example.com/img1.jpg"],
+  "github_url": "https://github.com/user/ecommerce",
+  "demo_link": "https://shop.demo.com",
+  "technologies": ["Laravel", "Vue.js", "Stripe", "Redis"],
+  "status": "in_progress"
+}
+```
+
+### Update Project (Protected)
+```http
+PUT /api/v1/projects/{id}/update
+Authorization: Bearer {token}
+```
+
+### Change Status (Protected)
+```http
+PATCH /api/v1/projects/{id}/status
+Authorization: Bearer {token}
+```
+**Body:**
+```json
+{
+  "status": "completed"
+}
+```
+
+### Delete Project (Protected)
+```http
+DELETE /api/v1/projects/{id}/delete
+Authorization: Bearer {token}
+```
+
+---
+
+## 📊 Complete Route List
+
+### Public Routes (No Auth)
+```
+POST   /api/v1/auth/register
+POST   /api/v1/auth/login
+GET    /api/v1/about
+GET    /api/v1/skills
+GET    /api/v1/education
+GET    /api/v1/education/{id}/show
+GET    /api/v1/projects              (Paginated)
+GET    /api/v1/projects/{id}/show
+```
+
+### Protected Routes (Requires Bearer Token)
+```
+# Auth
+POST   /api/v1/auth/logout
+POST   /api/v1/auth/logout-all
+GET    /api/v1/auth/me
+
+# About
+POST   /api/v1/about
+PUT    /api/v1/about/{id}/update
+DELETE /api/v1/about/{id}/delete
+
+# Skills
+POST   /api/v1/skills/store
+PUT    /api/v1/skills/update         (Sync)
+DELETE /api/v1/skills/{id}/delete
+
+# Education
+POST   /api/v1/education/store
+PUT    /api/v1/education/{id}/update
+DELETE /api/v1/education/{id}/delete
+
+# Projects
+POST   /api/v1/projects/store
+PUT    /api/v1/projects/{id}/update
+PATCH  /api/v1/projects/{id}/status
+DELETE /api/v1/projects/{id}/delete
+```
+
+---
+
+## 🎨 Status Enum Values
+
+```json
+{
+  "in_progress": {
+    "label": "In Progress",
+    "color": "bg-blue-500"
+  },
+  "completed": {
+    "label": "Completed",
+    "color": "bg-green-500"
+  },
+  "backlog": {
+    "label": "Backlog",
+    "color": "bg-yellow-500"
+  },
+  "cancelled": {
+    "label": "Cancelled",
+    "color": "bg-red-500"
+  }
+}
+```
+
+---
+
+## 🛠️ Development Setup
+
+```bash
+# Install dependencies
+composer install
+
+# Run migrations
+php artisan migrate
+
+# Generate app key
+php artisan key:generate
+
+# Start server
+php artisan serve
+```
+
+---
+
+## 📦 Technology Stack
+
+- **Backend**: Laravel 12 (PHP 8.2+)
+- **Architecture**: Domain-Driven Design (DDD)
+- **Database**: MySQL (via Herd)
+- **Authentication**: Laravel Sanctum (Token-based)
+- **Testing**: Pest PHP
+- **Validation**: Form Requests + Value Objects
+
+---
+
+## ⚡ Quick Test Script
+
+```bash
+#!/bin/bash
+
+# 1. Register
+echo "Registering user..."
+REGISTER_RESPONSE=$(curl -s -X POST http://localhost/api/v1/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Test","surname":"User","username":"testuser","email":"test@test.com","password":"password123","password_confirmation":"password123"}')
+
+TOKEN=$(echo $REGISTER_RESPONSE | jq -r '.data.token')
+echo "Token: $TOKEN"
+
+# 2. Create Project
+echo "Creating project..."
+curl -X POST http://localhost/api/v1/projects/store \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Portfolio API",
+    "description": "DDD-based portfolio management system",
+    "technologies": ["Laravel", "DDD", "Sanctum"],
+    "status": "in_progress"
+  }'
+
+# 3. List Projects
+echo "Listing projects..."
+curl "http://localhost/api/v1/projects?per_page=5"
+```
+
+Save as `test-api.sh`, make executable: `chmod +x test-api.sh`, run: `./test-api.sh`
+
