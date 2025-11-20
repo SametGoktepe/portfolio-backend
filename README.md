@@ -52,8 +52,11 @@ curl http://localhost/api/v1/skills
 3. [Skills](#-skills)
 4. [Education](#-education)
 5. [Projects](#-projects-with-pagination)
-6. [Architecture](#-architecture)
-7. [Error Handling](#-error-handling)
+6. [Hobbies](#-hobbies)
+7. [References](#-references)
+8. [Work Life](#-work-life-work-experience)
+9. [Architecture](#-architecture)
+10. [Error Handling](#-error-handling)
 
 ---
 
@@ -373,6 +376,10 @@ GET    /api/v1/skills
 GET    /api/v1/education
 GET    /api/v1/education/{id}/show
 GET    /api/v1/projects              (Paginated)
+GET    /api/v1/hobbies
+GET    /api/v1/hobbies/{id}/show
+GET    /api/v1/references
+GET    /api/v1/references/{id}/show
 ```
 
 ### Protected Routes (Requires Bearer Token)
@@ -403,6 +410,16 @@ POST   /api/v1/projects/store
 PUT    /api/v1/projects/{id}/update
 PATCH  /api/v1/projects/{id}/status
 DELETE /api/v1/projects/{id}/delete
+
+# Hobbies
+POST   /api/v1/hobbies/store
+PUT    /api/v1/hobbies/{id}/update
+DELETE /api/v1/hobbies/{id}/delete
+
+# References
+POST   /api/v1/references/store
+PUT    /api/v1/references/{id}/update
+DELETE /api/v1/references/{id}/delete
 ```
 
 ---
@@ -571,6 +588,220 @@ This is a personal portfolio API. Feel free to fork and customize for your own u
 
 ---
 
+## 🎨 Hobbies
+
+### List Hobbies (Public)
+```http
+GET /api/v1/hobbies
+```
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Hobbies retrieved successfully",
+  "data": [
+    {
+      "id": "uuid",
+      "name": "Photography",
+      "image": "https://example.com/photography.jpg",
+      "description": "Landscape and portrait photography"
+    },
+    {
+      "id": "uuid",
+      "name": "Coding",
+      "image": "/images/coding.jpg",
+      "description": "Open source contributions"
+    }
+  ]
+}
+```
+
+### Show Hobby (Public)
+```http
+GET /api/v1/hobbies/{id}/show
+```
+
+### Create Hobby (Protected)
+```http
+POST /api/v1/hobbies/store
+Authorization: Bearer {token}
+```
+**Body:**
+```json
+{
+  "name": "Photography",
+  "image": "https://example.com/photography.jpg",
+  "description": "Capturing beautiful moments"
+}
+```
+
+### Update Hobby (Protected)
+```http
+PUT /api/v1/hobbies/{id}/update
+Authorization: Bearer {token}
+```
+
+### Delete Hobby (Protected)
+```http
+DELETE /api/v1/hobbies/{id}/delete
+Authorization: Bearer {token}
+```
+
+---
+
+## 💼 References
+
+### List References (Public)
+```http
+GET /api/v1/references
+```
+**Response:**
+```json
+{
+  "success": true,
+  "message": "References retrieved successfully",
+  "data": [
+    {
+      "id": "uuid",
+      "full_name": "John Smith",
+      "contact": {
+        "email": "john@company.com",
+        "phone": "+1 555 123 4567"
+      },
+      "company": {
+        "company": "Tech Corp",
+        "position": "CTO"
+      },
+      "quote": "Outstanding developer with great problem-solving skills",
+      "image": "https://example.com/john.jpg"
+    }
+  ]
+}
+```
+
+### Show Reference (Public)
+```http
+GET /api/v1/references/{id}/show
+```
+
+### Create Reference (Protected)
+```http
+POST /api/v1/references/store
+Authorization: Bearer {token}
+```
+**Body:**
+```json
+{
+  "full_name": "Jane Doe",
+  "email": "jane@example.com",
+  "phone": "+1 555 987 6543",
+  "company": "Digital Solutions",
+  "position": "Senior Developer",
+  "quote": "Excellent team player and technical leader",
+  "image": "https://example.com/jane.jpg"
+}
+```
+
+### Update Reference (Protected)
+```http
+PUT /api/v1/references/{id}/update
+Authorization: Bearer {token}
+```
+
+### Delete Reference (Protected)
+```http
+DELETE /api/v1/references/{id}/delete
+Authorization: Bearer {token}
+```
+
+---
+
+## 💼 Work Life (Work Experience)
+
+### List Work Experiences (Public)
+```http
+GET /api/v1/work-life
+```
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Work experiences retrieved successfully",
+  "data": [
+    {
+      "id": "uuid",
+      "company_name": "Tech Corp",
+      "position": "Senior Software Engineer",
+      "work_period": {
+        "start_year": 2020,
+        "end_year": 2023,
+        "is_ongoing": false,
+        "duration": "3 years"
+      },
+      "description": "Led development of microservices architecture"
+    }
+  ]
+}
+```
+
+### Show Work Experience (Protected)
+```http
+GET /api/v1/work-life/{id}/show
+Authorization: Bearer {token}
+```
+
+### Create Work Experience (Protected)
+```http
+POST /api/v1/work-life/store
+Authorization: Bearer {token}
+```
+**Body:**
+```json
+{
+  "company_name": "Tech Corp",
+  "position": "Senior Software Engineer",
+  "start_year": 2020,
+  "end_year": 2023,
+  "is_ongoing": false,
+  "description": "Led development of microservices architecture"
+}
+```
+
+**For ongoing positions:**
+```json
+{
+  "company_name": "Tech Corp",
+  "position": "Senior Software Engineer",
+  "start_year": 2023,
+  "is_ongoing": true,
+  "description": "Leading development of microservices architecture"
+}
+```
+
+**Validation Rules:**
+- `company_name`: required, string, min:2, max:255
+- `position`: required, string, min:2, max:100
+- `start_year`: required, integer, min:1900, max:current_year+1
+- `end_year`: nullable, integer, min:1900, max:current_year+1, gte:start_year
+- `is_ongoing`: boolean
+- `description`: nullable, string, max:2000
+
+**Note:** If `is_ongoing` is `true`, `end_year` must be `null`. If `is_ongoing` is `false`, `end_year` is required.
+
+### Update Work Experience (Protected)
+```http
+PUT /api/v1/work-life/{id}/update
+Authorization: Bearer {token}
+```
+
+### Delete Work Experience (Protected)
+```http
+DELETE /api/v1/work-life/{id}/delete
+Authorization: Bearer {token}
+```
+
+---
+
 ## 🏗️ Architecture
 
 ### Domain-Driven Design Structure
@@ -604,6 +835,21 @@ src/Domain/                     # Business Logic Layer
 ├── Skill/
 │   ├── Models/
 │   ├── ValueObjects/           # SkillName
+│   ├── Services/
+│   └── Repositories/
+├── Hobby/
+│   ├── Models/
+│   ├── ValueObjects/           # HobbyName, HobbyImage, HobbyDescription
+│   ├── Services/
+│   └── Repositories/
+├── Reference/
+│   ├── Models/
+│   ├── ValueObjects/           # FullName, ContactInfo, CompanyInfo, Quote
+│   ├── Services/
+│   └── Repositories/
+├── WorkLife/
+│   ├── Models/
+│   ├── ValueObjects/           # Company, Position, WorkPeriod, WorkDescription
 │   ├── Services/
 │   └── Repositories/
 └── Shared/

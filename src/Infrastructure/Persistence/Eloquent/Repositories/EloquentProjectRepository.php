@@ -43,8 +43,13 @@ final class EloquentProjectRepository implements ProjectRepositoryInterface
 
         $paginator = $query->paginate($perPage);
 
+        // Convert Eloquent models to Domain models
+        $domainProjects = collect($paginator->items())
+            ->map(fn($eloquentProject) => $this->toDomain($eloquentProject))
+            ->toArray();
+
         return [
-            'data' => $paginator->items(),
+            'data' => $domainProjects,
             'current_page' => $paginator->currentPage(),
             'per_page' => $paginator->perPage(),
             'total' => $paginator->total(),
@@ -67,18 +72,18 @@ final class EloquentProjectRepository implements ProjectRepositoryInterface
     public function save(Project $project): void
     {
         $eloquentProject = new EloquentProject();
-        
+
         $this->mapToEloquent($eloquentProject, $project);
-        
+
         $eloquentProject->save();
     }
 
     public function update(Project $project): void
     {
         $eloquentProject = EloquentProject::findOrFail($project->id()->value());
-        
+
         $this->mapToEloquent($eloquentProject, $project);
-        
+
         $eloquentProject->save();
     }
 
