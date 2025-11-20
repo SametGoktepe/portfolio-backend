@@ -1,0 +1,66 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    container_name: portfolio-backend-app
+    restart: unless-stopped
+    networks:
+      - proxy
+    environment:
+      - APP_NAME=${APP_NAME:-Portfolio}
+      - APP_ENV=${APP_ENV:-production}
+      - APP_KEY=${APP_KEY}
+      - APP_DEBUG=${APP_DEBUG:-false}
+      - APP_URL=${APP_URL:-https://app.service.sametgoktepe.com}
+      - DB_CONNECTION=mysql
+      - DB_HOST=portfolio-backend-db
+      - DB_PORT=3306
+      - DB_DATABASE=portfolio
+      - DB_USERNAME=${MYSQL_USER:-portfolio_user}
+      - DB_PASSWORD=${MYSQL_PASSWORD:-portfolio_password}
+      - LOG_CHANNEL=stack
+      - LOG_LEVEL=${LOG_LEVEL:-error}
+    volumes:
+      - ./storage:/var/www/html/storage
+      - ./bootstrap/cache:/var/www/html/bootstrap/cache
+    depends_on:
+      - db
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.portfolio-backend.entrypoints=http"
+      - "traefik.http.routers.portfolio-backend.rule=Host(`app.service.sametgoktepe.com`)"
+      - "traefik.http.middlewares.portfolio-backend-https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.routers.portfolio-backend.middlewares=portfolio-backend-https-redirect"
+      - "traefik.http.routers.portfolio-backend-secure.entrypoints=https"
+      - "traefik.http.routers.portfolio-backend-secure.rule=Host(`app.service.sametgoktepe.com`)"
+      - "traefik.http.routers.portfolio-backend-secure.tls=true"
+      - "traefik.http.routers.portfolio-backend-secure.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.portfolio-backend-secure.service=portfolio-backend"
+      - "traefik.http.services.portfolio-backend.loadbalancer.server.port=80"
+
+  db:
+    image: mysql:8.0
+    container_name: portfolio-backend-db
+    restart: unless-stopped
+    networks:
+      - proxy
+    ports:
+      - "${DB_EXTERNAL_PORT:-3306}:3306"
+    environment:
+      - MYSQL_DATABASE=${DB_DATABASE:-portfolio}
+      - MYSQL_USER=${MYSQL_USER:-portfolio_user}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD:-portfolio_password}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-root_password}
+    volumes:
+      - db_data:/var/lib/mysql
+    command: --default-authentication-plugin=mysql_native_password --bind-address=0.0.0.0
+
+networks:
+  proxy:
+    external: true
+
+volumes:
+  db_data:
+
